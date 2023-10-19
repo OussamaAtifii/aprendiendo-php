@@ -1,0 +1,20 @@
+{
+    "name": "oussama/proyecto1",
+    "description": "Proyecto de ejemplo con composer",
+    "type": "project",
+    "license": "GNU/GPL",
+    "autoload": {
+        "psr-4": {
+            "Src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "OussamaAtifii",
+            "email": "oussamaati03@gmail.com"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.23"
+    }
+}
