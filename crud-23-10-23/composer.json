@@ -1,0 +1,21 @@
+{
+    "name": "oussama/crud-23-10-23",
+    "description": "users crud",
+    "type": "project",
+    "license": "Free",
+    "autoload": {
+        "psr-4": {
+            "Src\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "OussamaAtifii",
+            "email": "oussamaati03@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.5",
+        "fakerphp/faker": "^1.23"
+    }
+}
