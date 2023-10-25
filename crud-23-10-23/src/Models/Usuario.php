@@ -2,7 +2,9 @@
 
 namespace Src\Models;
 
+use \PDO;
 use \PDOException;
+use Src\Utils\Provincias;
 
 class Usuario extends Conexion
 {
@@ -39,8 +41,20 @@ class Usuario extends Conexion
         parent::$conexion = null;
     }
 
-    public function read()
+    public static function read(): array
     {
+        parent::setConexion();
+        $q = "select * from users order by id desc";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute();
+        } catch (PDOException $ex) {
+            die("Error en read(): " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function update()
@@ -55,12 +69,29 @@ class Usuario extends Conexion
     public static function crearRegistrosAleatorios($cantidad)
     {
         if (self::hayRegistros()) return;
+
+        $faker = \Faker\Factory::create("es-ES");
+        for ($i = 0; $i < $cantidad; $i++) {
+            $nombre = $faker->firstName();
+            $apellidos = $faker->lastName() . " " . $faker->lastName();
+            $email = $faker->unique()->email();
+            $perfil = random_int(1, 2);
+            $provincia = $faker->randomElement(Provincias::$misProvincias);
+
+            (new Usuario)->setNombre($nombre)
+                ->setApellidos($apellidos)
+                ->setEmail($email)
+                ->setPerfil($perfil)
+                ->setProvincia($provincia)
+                ->create();
+        }
     }
 
     private static function hayRegistros(): bool
     {
-        $q = "select * from usuario";
-        $stmt = parent::getConexion()->prepare($q);
+        parent::setConexion();
+        $q = "select * from users";
+        $stmt = parent::$conexion->prepare($q);
 
         try {
             $stmt->execute();
