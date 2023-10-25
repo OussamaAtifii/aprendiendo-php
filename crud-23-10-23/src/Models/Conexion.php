@@ -11,11 +11,12 @@ class Conexion
 
     public function __construct()
     {
+        self::setConexion();
     }
 
-    public static function getConexion(): PDO
+    public static function setConexion()
     {
-        if (self::$conexion != null) return self::$conexion;
+        if (self::$conexion != null) return;
 
         // Cargar la configuración de .env
         $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . "/../../");
@@ -33,7 +34,6 @@ class Conexion
         // Crear conexion con db
         try {
             self::$conexion = new PDO($dns, $usuario, $password, $options);
-            return self::$conexion;
         } catch (PDOException $ex) {
             die("Error al conectar, mensaje: " . $ex->getMessage());
         }
