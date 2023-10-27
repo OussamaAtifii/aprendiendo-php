@@ -103,6 +103,24 @@ class Usuario extends Conexion
         return $stmt->rowCount();
     }
 
+    public static function existeEmail(string $email): bool
+    {
+        parent::setConexion();
+        $q = "select id from users where email=:e";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([":e" => $email]);
+        } catch (PDOException $ex) {
+            die("Error al comprobar email: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+        return $stmt->rowCount();
+    }
+
+
+
     // SETTERS
 
     public function setId(int $id): self
