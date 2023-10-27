@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 use Src\Models\Usuario;
 
 require_once __DIR__ . "/../vendor/autoload.php";
@@ -25,8 +27,12 @@ $todos = Usuario::read();
 
 <body>
     <h1 class="text-center text-xl mt-5">Listado de Usuarios</h1>
-
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-2/3 m-5 mx-auto">
+        <div class="flex flex-row-reverse mb-3">
+            <a href="./form.php" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <i class="fas fa-add mr-2"></i>Nuevo</a>
+
+        </div>
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -53,6 +59,8 @@ $todos = Usuario::read();
             <tbody>
                 <?php
                 foreach ($todos as $usuario) {
+                    $colorPerfil = $usuario->perfil == "Admin" ? "text-red-500" : "text-green-500";
+
                     echo <<<TXT
                     <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -62,16 +70,21 @@ $todos = Usuario::read();
                         {$usuario->apellidos}
                     </td>
                     <td class="px-6 py-4">
-                        Apple MacBook Pro 17"
+                        {$usuario->email}
                     </td>
                     <td class="px-6 py-4">
-                        Laptop
+                        {$usuario->provincia}
+                    </td>
+                    <td class="$colorPerfil px-6 py-4">
+                        {$usuario->perfil}
                     </td>
                     <td class="px-6 py-4">
-                        $2999
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <form action="delete.php" method="POST">
+                            <input name="id" hidden value="{$usuario->id}">
+                            <button type="submit">
+                                <i class="fas fa-trash text-red-600"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 TXT;
@@ -81,7 +94,21 @@ $todos = Usuario::read();
             </tbody>
         </table>
     </div>
-
+    <?php
+    if (isset($_SESSION["mensaje"])) {
+        echo <<<TXT
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '{$_SESSION["mensaje"]}',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            </script>
+    TXT;
+    }
+    unset($_SESSION["mensaje"]);
+    ?>
 </body>
 
 </html>
