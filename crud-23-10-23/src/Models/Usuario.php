@@ -28,14 +28,14 @@ class Usuario extends Conexion
 
         try {
             $stmt->execute([
-                ":n" => $this->nombre,
-                ":a" => $this->apellidos,
-                ":e" => $this->email,
-                ":p" => $this->provincia,
-                ":perfil" => $this->perfil
+                ':n' => $this->nombre,
+                ':a' => $this->apellidos,
+                ':e' => $this->email,
+                ':p' => $this->provincia,
+                ':perfil' => $this->perfil
             ]);
         } catch (PDOException $ex) {
-            die("Error al insertar, mensaje: " . $ex->getMessage());
+            die("Error al insertar datos: " . $ex->getMessage());
         }
 
         parent::$conexion = null;

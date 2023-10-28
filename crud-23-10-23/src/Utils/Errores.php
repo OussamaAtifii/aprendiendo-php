@@ -8,21 +8,22 @@ class Errores
 {
     public static function hayErrorCampo($valor, $longitud): bool
     {
+        if (strlen($valor) == 0) return true;
         return (strlen($valor) < $longitud);
     }
 
     public static function emailValido(string $email): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return false;
+            return true;
         }
 
-        return !Usuario::existeEmail($email);
+        return Usuario::existeEmail($email);
     }
 
     public static function errorProvincia($provincia): bool
     {
-        return !in_array($provincia, Provincias::$misProvincias);
+        return in_array($provincia, Provincias::$misProvincias);
     }
 
     public static function pintarError(string $nombre)

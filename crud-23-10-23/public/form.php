@@ -8,11 +8,12 @@ require_once __DIR__ . "/../vendor/autoload.php";
 $provincias = Provincias::$misProvincias;
 
 if (isset($_POST["btn"])) {
-    $nombre = ucwords(htmlspecialchars(trim($POST["nombre"])));
-    $apellidos = ucwords(htmlspecialchars(trim($POST["apellidos"])));
-    $email = htmlspecialchars(trim($POST["email"]));
-    $provincia = htmlspecialchars(trim($POST["provincia"]));
+    $nombre = ucwords(htmlspecialchars(trim($_POST["nombre"])));
+    $apellidos = ucwords(htmlspecialchars(trim($_POST["apellidos"])));
+    $email = htmlspecialchars(trim($_POST["email"]));
+    $provincia = $_POST["provincia"];
     $perfil = "User";
+
     if (isset($_POST["perfil"])) {
         $perfil = "Admin";
     }
@@ -34,15 +35,16 @@ if (isset($_POST["btn"])) {
         $_SESSION["errEmail"] = "Error, el email es invalido o está duplicado";
     }
 
-    if (Errores::errorProvincia($provincia)) {
+    if (!Errores::errorProvincia($provincia)) {
         $errrores = true;
         $_SESSION["errProvincia"] = "Error, la provincia no es válida";
     }
 
     if ($errores) {
-        header("Location:{$_SERVER["PHP_SELF"]}");
+        header("Location:{$_SERVER['PHP_SELF']}");
         die();
     }
+
     (new Usuario)->setNombre($nombre)
         ->setApellidos($apellidos)
         ->setPerfil($perfil)
@@ -50,7 +52,7 @@ if (isset($_POST["btn"])) {
         ->setProvincia($provincia)
         ->create();
 
-    $_SESSION["mensaje"] = "Usuario creada con éxito";
+    $_SESSION["mensaje"] = "Usuario creado con éxito";
     header("Location:index.php");
 } else {
 
@@ -96,7 +98,7 @@ if (isset($_POST["btn"])) {
                     <div class="mb-6">
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tu
                             email</label>
-                        <input type="email" id="email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" required>
+                        <input type="email" id="email" name="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com">
                         <?php
                         Errores::pintarError("errEmail")
                         ?>
