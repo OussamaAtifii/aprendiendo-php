@@ -81,6 +81,9 @@ $todos = Usuario::read();
                     <td class="px-6 py-4">
                         <form action="delete.php" method="POST">
                             <input name="id" hidden value="{$usuario->id}">
+                            <a href="update.php?id={$usuario->id}">
+                            <i class="fas fa-edit mr-2"></i>
+                            </a>
                             <button type="submit">
                                 <i class="fas fa-trash text-red-600"></i>
                             </button>

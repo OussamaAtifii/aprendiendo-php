@@ -57,12 +57,44 @@ class Usuario extends Conexion
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function update()
+    public function update(int $id)
     {
+        parent::setConexion();
+        $q = "update users set nombre=:n, apellidos=:a, email=:e, provincia=:p, perfil=:pe where id=:i";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([
+                ':n' => $this->nombre,
+                ':a' => $this->apellidos,
+                ':e' => $this->email,
+                ':p' => $this->provincia,
+                ':pe' => $this->perfil,
+                ':i' => $id
+            ]);
+        } catch (PDOException $ex) {
+            die("Error al modificar usuario: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
     }
 
-    public function delete()
+    public static function delete(int $id)
     {
+        parent::setConexion();
+        $q = "delete from users where id =:i";
+
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([
+                ":i" => $id
+            ]);
+        } catch (PDOException $ex) {
+            die("Error al borrar usuario: " . $ex);
+        }
+
+        parent::$conexion = null;
     }
 
     // OTROS
@@ -103,14 +135,17 @@ class Usuario extends Conexion
         return $stmt->rowCount();
     }
 
-    public static function existeEmail(string $email): bool
+    public static function existeEmail(string $email, int|null $id = null): bool
     {
         parent::setConexion();
-        $q = "select id from users where email=:e";
+        $q = $id == null ? "select id from users where email=:e" : "select id from users where email=:e and id != :i";
+
+        $options = $id == null ? [":e" => $email] : [":e" => $email, ":i" => $id];
+
         $stmt = parent::$conexion->prepare($q);
 
         try {
-            $stmt->execute([":e" => $email]);
+            $stmt->execute($options);
         } catch (PDOException $ex) {
             die("Error al comprobar email: " . $ex->getMessage());
         }
@@ -119,7 +154,21 @@ class Usuario extends Conexion
         return $stmt->rowCount();
     }
 
+    public static function findUser(int $id)
+    {
+        parent::setConexion();
+        $q = "select * from users where id=:i";
+        $stmt = parent::$conexion->prepare($q);
 
+        try {
+            $stmt->execute([":i" => $id]);
+        } catch (PDOException $ex) {
+            die("Error al encontrar el usuario: " . $ex->getMessage());
+        }
+
+        parent::$conexion == null;
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
 
     // SETTERS
 

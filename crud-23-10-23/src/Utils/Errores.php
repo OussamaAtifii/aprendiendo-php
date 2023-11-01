@@ -12,13 +12,13 @@ class Errores
         return (strlen($valor) < $longitud);
     }
 
-    public static function emailValido(string $email): bool
+    public static function emailValido(string $email, int|null $id = null): bool
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return true;
         }
 
-        return Usuario::existeEmail($email);
+        return Usuario::existeEmail($email, $id);
     }
 
     public static function errorProvincia($provincia): bool
