@@ -37,7 +37,7 @@ class Articulos extends Conexion
             die("Error al crear un articulo: " . $ex->getMessage());
         }
 
-        parent::$conexion == null;
+        parent::$conexion = null;
     }
 
     public static function read(): array
@@ -52,12 +52,25 @@ class Articulos extends Conexion
             die("Error al leer los registros: " .  $ex->getMessage());
         }
 
-        parent::$conexion == null;
+        parent::$conexion = null;
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public function delete()
+    public static function delete(int $id)
     {
+        parent::setConexion();
+        $q = "delete from articulos where id= :i";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([
+                ':i' => $id
+            ]);
+        } catch (PDOException $ex) {
+            die("Error al borrar el registros: " .  $ex->getMessage());
+        }
+
+        parent::$conexion = null;
     }
 
     public function update()
@@ -65,7 +78,6 @@ class Articulos extends Conexion
     }
 
     // FAKER
-
     private static function hayRegistros(): bool
     {
         parent::setConexion();

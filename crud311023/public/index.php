@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 use App\Db\Articulos;
 
@@ -60,7 +61,6 @@ $articulos = Articulos::read();
                     <?php
                     foreach ($articulos as $articulo) {
                         $color = $articulo->stock <= 5 ? "text-red-600" : "text-green-600";
-
                         echo <<<TXT
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td class="w-32 p-4">
@@ -80,6 +80,7 @@ $articulos = Articulos::read();
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <form action="delete.php" method="POST">
+                            <input type="hidden" name="id" value="{$producto->id}" />
                             <a href="detalles.php?id={$articulo->id}">
                                 <i class="fas fa-info mr-5"></i>
                             </a>
@@ -100,7 +101,21 @@ $articulos = Articulos::read();
 
         </div>
     </div>
-
+    <?php
+    if (isset($_SESSION['mensaje'])) {
+        echo <<<TXT
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: '{$_SESSION['mensaje']}',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            </script>
+        TXT;
+        unset($_SESSION['mensaje']);
+    }
+    ?>
 </body>
 
 </html>
