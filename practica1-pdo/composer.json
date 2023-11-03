@@ -1,0 +1,20 @@
+{
+    "name": "oussama/practica1-pdo",
+    "description": "Practica1-PDO",
+    "type": "project",
+    "license": "Free",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "OussamaAtifii",
+            "email": "oussamaati03@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
