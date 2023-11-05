@@ -8,13 +8,14 @@ const MAYUS_OFF = 1;
 class Errores
 {
     public static array $tiposImagen = [
-        ['image/gif'],
-        ['image/png'],
-        ['image/jpeg'],
-        ['image/bmp'],
-        ['image/webp'],
-        ['image/svg+xml'],
-        ['image/x-icon']
+        "image/gif",
+        "image/png",
+        "image/jpg",
+        "image/jpeg",
+        "image/bmp",
+        "image/webp",
+        "image/svg+xml",
+        "image/x-icon"
     ];
 
     public static function errorTexto(string $nombre, string $valor, int $longitud): bool
@@ -54,7 +55,6 @@ class Errores
 
     public static function errorImagen(string $type, int $size): bool
     {
-        // return !in_array($type, self::$tiposImagen);
         if (!in_array($type, self::$tiposImagen)) {
             $_SESSION['Imagen'] = "Error, el archivo debe ser una imagen";
             return true;

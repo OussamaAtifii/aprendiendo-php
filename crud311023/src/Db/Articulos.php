@@ -163,7 +163,7 @@ class Articulos extends Conexion
         return $this;
     }
 
-    public function setStock(bool $stock): self
+    public function setStock(int $stock): self
     {
         $this->stock = $stock;
         return $this;
