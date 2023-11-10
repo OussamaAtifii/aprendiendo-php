@@ -43,7 +43,7 @@ class User extends Conexion
     {
         parent::setConexion();
 
-        $q = "select isAdmin, password from users where email=:e";
+        $q = "select id, isAdmin, password from users where email=:e";
         $stmt = parent::$conexion->prepare($q);
 
         try {
@@ -68,8 +68,8 @@ class User extends Conexion
             return false;
         }
 
-        // Login correcto, enviar isAdmin
-        return $datos->idAdmin == 0 ? "user" : "admin";
+        // Login correcto, enviar los datos
+        return $datos;
     }
 
     // FAKER
@@ -106,6 +106,22 @@ class User extends Conexion
                 ->setIsAdmin($isAdmin)
                 ->create();
         }
+    }
+
+    public static function getIds()
+    {
+        parent::setConexion();
+        $q = "select id from users";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute();
+        } catch (PDOException $ex) {
+            die("Error al obtener ids: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     // SETTERS

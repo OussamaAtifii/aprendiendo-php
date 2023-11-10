@@ -20,7 +20,8 @@ class Conexion
         $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . "/../../");
         $dotenv->load();
 
-        $user = $_ENV['USER'];
+        // $user = "$_ENV['USER']";
+        $user = "paco";
         $pass = $_ENV['PASS'];
         $host = $_ENV['HOST'];
         $db = $_ENV['DB'];

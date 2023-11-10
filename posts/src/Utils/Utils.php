@@ -22,5 +22,15 @@ class Utils
             $_SESSION['email'] = "Error, el email no es válido";
             return  false;
         }
+
+        return true;
+    }
+
+    public static function mostrarErrores($nombre)
+    {
+        if (isset($_SESSION[$nombre])) {
+            echo "<p class='text-sm italic text-red-700 mt-2'>{$_SESSION[$nombre]}</p>";
+            unset($_SESSION[$nombre]);
+        }
     }
 }

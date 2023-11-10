@@ -1,5 +1,7 @@
 <?php
 
+use App\Db\Post;
+use App\Db\User;
 use App\Utils\Utils;
 
 session_start();
@@ -14,6 +16,25 @@ if (isset($_POST['btn'])) {
     if (!Utils::validarEmail($email)) {
         $errores = true;
     }
+
+    if ($errores) {
+        header("Location:login.php");
+        die();
+    }
+
+    // Validación con bd
+    $datos = User::login($email, $password);
+
+    if (!$datos) {
+        $_SESSION['errVal'] = "Email o password incorrectos";
+        header("Location:login.php");
+        die("Fallo login");
+    }
+
+    $_SESSION['Email'] = $email;
+    $_SESSION['id'] = $datos->id;
+    $_SESSION['perfil'] = $datos->isAdmin;
+    header("Location:./posts/index.php");
 }
 ?>
 
@@ -45,15 +66,18 @@ if (isset($_POST['btn'])) {
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                         <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
+                        <?php Utils::mostrarErrores("email") ?>
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                         <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                        <?php Utils::mostrarErrores("errVal") ?>
                     </div>
                     <button type="submit" name="btn" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>Sign in</button>
                     <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                         Don’t have an account yet? <a href="./users/register.php" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
                     </p>
+
                 </form>
             </div>
         </div>
