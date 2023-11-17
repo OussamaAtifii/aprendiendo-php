@@ -20,8 +20,7 @@ class Conexion
         $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . "/../../");
         $dotenv->load();
 
-        // $user = "$_ENV['USER']";
-        $user = "paco";
+        $user = $_ENV['USER'];
         $pass = $_ENV['PASS'];
         $host = $_ENV['HOST'];
         $db = $_ENV['DB'];
@@ -30,7 +29,7 @@ class Conexion
         $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 
         try {
-            self::$conexion = new PDO($dsn, $user, $pass, $options);;
+            self::$conexion = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $ex) {
             die("Error en la conexion: " . $ex->getMessage());
         }

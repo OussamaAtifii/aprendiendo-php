@@ -1,3 +1,76 @@
+<?php
+
+use App\Db\User;
+use App\Utils\Utils;
+
+require_once __DIR__ . "/../../vendor/autoload.php";
+session_start();
+
+if (isset($_SESSION['Email'])) {
+    header("Location:./../posts");
+    die();
+}
+
+if (isset($_POST['btn'])) {
+    $email = Utils::sanearTexto($_POST['email']);
+    $password = Utils::sanearTexto($_POST['password']);
+    $errors = false;
+
+    if (!Utils::validarEmail($email)) {
+        $errors = true;
+    } else {
+        if (User::existeEmail($email)) {
+            $errors = true;
+            $_SESSION['email'] = "Ya existe un usuario con ese email";
+        }
+    }
+
+    if (!Utils::validarCadena("password", $password, 5)) {
+        $errors = true;
+    }
+
+    // Procesar imagen
+    $foto = "img/perfil/default.png";
+    if (is_uploaded_file($_FILES['foto']['tmp_name'])) {
+        if (Utils::validarImg($_FILES['foto']['type'], $_FILES['foto']['size'])) {
+            $ruta = "./../";
+            $foto = "img/perfil/." . uniqid() . "_" . $_FILES['foto']['name'];
+
+            if (!move_uploaded_file($_FILES['foto']['tmp_name'], $ruta . $foto)) {
+                $errors = true;
+                $_SESSION['Imagen'] = "No se pudo guardar la imagen";
+            }
+        } else {
+            $errors = true;
+        }
+    }
+
+    if ($errors) {
+        header("Location:{$_SERVER['PHP_SELF']}");
+        die();
+    }
+
+    (new User)->setEmail($email)
+        ->setPassword($password)
+        ->setFoto($foto)
+        ->setIsAdmin(0)
+        ->create();
+
+    $id = User::getIds($email)[0]->id;
+
+    $_SESSION['Email'] = $email;
+    $_SESSION['id'] = $id;
+    $_SESSION['perfil'] = 0;
+
+    // User::login($email, $password);
+
+    header("Location:./../posts/index.php");
+    die();
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,10 +95,11 @@
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                     Crea una cuenta
                 </h1>
-                <form class="space-y-4 md:space-y-6" action="/www/posts061123/public/register.php" method="POST">
+                <form class="space-y-4 md:space-y-6" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                         <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
+                        <?php echo Utils::mostrarErrores('email') ?>
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>

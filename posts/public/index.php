@@ -1,7 +1,10 @@
 <?php
 
+session_start();
+
 use App\Db\Post;
 use App\Db\User;
+use App\Utils\Utils;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -27,14 +30,30 @@ $posts = Post::readAll();
 
 <body style="background-color:blanchedalmond">
     <nav>
-        <ul class="flex mt-4 w-3/4 mx-auto flex-row-reverse">
+        <?php
+        if (isset($_SESSION['Email'])) {
+            $options = [
+                ['./posts/logout.php', 'Cerrar sesion', 'fa-solid fa-arrow-right-from-bracket'],
+                ['./posts', 'Mis Posts', 'fa-solid fa-envelopes-bulk']
+            ];
+        } else {
+            $options = [
+                ['login.php', 'Login', 'fa-solid fa-arrow-right-from-bracket'],
+                ['./users/register.php', 'Register', 'fa-solid fa-user-plus']
+            ];
+        }
+
+        Utils::pintarNavBar($options);
+        ?>
+
+        <!-- <ul class="flex mt-4 w-3/4 mx-auto flex-row-reverse">
             <li class="mr-6">
-                <a class="text-blue-500 hover:text-blue-800" href="./users/register.php">Register</a>
+                <a class="text-blue-500 hover:text-blue-800" href="./users/register.php"><i class="fa-solid fa-user-plus"></i> Register</a>
             </li>
             <li class="mr-6">
-                <a class="text-blue-500 hover:text-blue-800" href="./login.php">Login</a>
+                <a class="text-blue-500 hover:text-blue-800" href="./login.php"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
             </li>
-        </ul>
+        </ul> -->
     </nav>
 
     <h3 class="text-xl text-center my-2">POSTS AL-ANDALUS</h3>

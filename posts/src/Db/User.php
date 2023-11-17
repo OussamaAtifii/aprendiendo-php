@@ -72,6 +72,24 @@ class User extends Conexion
         return $datos;
     }
 
+    public static function existeEmail(string $email): bool
+    {
+        parent::setConexion();
+        $q = "select id from users where email = :e";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([
+                ':e' => $email
+            ]);
+        } catch (PDOException $ex) {
+            die("Error en existe email: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+        return $stmt->rowCount();
+    }
+
     // FAKER
     private static function hayUsuarios()
     {
@@ -108,14 +126,17 @@ class User extends Conexion
         }
     }
 
-    public static function getIds()
+    public static function getIds(string $email = null)
     {
         parent::setConexion();
-        $q = "select id from users";
+
+        $q = $email == null
+            ? "select id from users"
+            : "select id from users where email = :e";
         $stmt = parent::$conexion->prepare($q);
 
         try {
-            $stmt->execute();
+            $stmt->execute($email == null ? [] : ['e' => $email]);
         } catch (PDOException $ex) {
             die("Error al obtener ids: " . $ex->getMessage());
         }

@@ -38,6 +38,26 @@ class Post extends Conexion
         parent::$conexion = null;
     }
 
+    public function update(int $id)
+    {
+        $q = "update posts set titulo=:t, descripcion=:d, imagen=:i, user=:u where id=:id";
+        $stmt = parent::$conexion->prepare($q);
+
+        try {
+            $stmt->execute([
+                ':t' => $this->titulo,
+                ':d' => $this->descripcion,
+                ':i' => $this->imagen,
+                ':u' => $this->user,
+                'id' => $id
+            ]);
+        } catch (PDOException $ex) {
+            die("Error al modificar un post: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+    }
+
     public static function readAll(?int $id = null)
     {
         parent::setConexion();
@@ -59,11 +79,34 @@ class Post extends Conexion
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    public static function getPostById(int $id)
+    public static function getPostById(int $id, $idUser = null)
     {
         parent::setConexion();
 
-        $q = "select posts.*, email from users, posts where users.id=posts.user AND posts.id=:i order by posts.id desc";
+        $q = $idUser == null
+            ? "select posts.*, email from users, posts where users.id=posts.user AND posts.id=:i order by posts.id desc"
+            : "select * from posts where id=:idP AND user=:idU";
+        $stmt = parent::$conexion->prepare($q);
+
+        $opciones = $idUser == null
+            ? [':i' => $id]
+            : [':idP' => $id, ':idU' => $idUser];
+
+        try {
+            $stmt->execute($opciones);
+        } catch (PDOException $ex) {
+            die("Error en getPostById: " . $ex->getMessage());
+        }
+
+        parent::$conexion = null;
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    public static function delete(int $id)
+    {
+        parent::setConexion();
+
+        $q = "delete from posts where id=:i";
         $stmt = parent::$conexion->prepare($q);
 
         try {
@@ -75,7 +118,6 @@ class Post extends Conexion
         }
 
         parent::$conexion = null;
-        return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
     // FAKER
